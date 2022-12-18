@@ -15,6 +15,3 @@ class Refresh:
                                 data={"grant_type":"refresh_token","refresh_token":REFRESH_TOKEN},
                                 headers={"Authorization": "Basic " + BASE_64})
         return response.json()['access_token']
-
-a = Refresh()
-print(a.refresh())
