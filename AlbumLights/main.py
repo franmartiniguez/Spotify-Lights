@@ -146,7 +146,6 @@ def main():
         else:
             GPIO.output(14,GPIO.LOW)
         
-        time.sleep(1)
         
 
     
