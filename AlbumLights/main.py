@@ -130,6 +130,12 @@ def main():
     # if color_distance(current_track_art) < 250:
     #     led_button = 1
     
+
+    
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setwarnings(False)
+    GPIO.setup(14,GPIO.OUT)
+    
     while True:
         refresh_token = Refresh()
         SPOTIFY_ACCESS_TOKEN = refresh_token.refresh()
