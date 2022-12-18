@@ -2,6 +2,7 @@ import urllib.request
 from PIL import Image
 import requests
 from refresh import Refresh
+import math
 
 SPOTIFY_GET_CURRENT_TRACK_URL = 'https://api.spotify.com/v1/me/player'
 SPOTIFY_ACCESS_TOKEN = ''
@@ -68,6 +69,44 @@ def get_color(current_track_art):
     
     return [average_red, average_green, average_blue]
 
+def color_distance(current_track_art):
+    if current_track_art == 'Unrecoverable Art':
+        red, green, blue = [255], [255], [255]
+    elif current_track_art == 'No Track Playing':
+        red, green, blue = [0], [0], [0]
+    else:
+        #Spotify image names are stored within the url Spotify gives, after /image/
+        #so this just finds it using the index where that part ends
+        image_name = current_track_art[current_track_art.find('e/') + 2:]
+
+        #gets the image using the specified url and image name and then converts the image into a list of rgb values of its pixels
+        urllib.request.urlretrieve(current_track_art, image_name)
+        img = Image.open(image_name)
+        img = img.convert('RGB')
+        
+        red = []
+        green = []
+        blue = []
+
+        #separates each rgb value by color
+        for i in img.getdata():
+            red.append(i[0])
+            green.append(i[1])
+            blue.append(i[2])
+        
+    average_red = sum(red)/len(red)
+    average_green = sum(green)/len(green)
+    average_blue = sum(blue)/len(blue)
+
+    distance_to_white = three_dimensional_distance(255, 255, 255, average_red, average_green, average_blue)
+
+    return distance_to_white
+
+#gets the distance between two points in three dimensions
+def three_dimensional_distance(x1, y1, z1, x2, y2, z2):
+    return math.sqrt((x1 - x2)**2 + (y1 - y2)**2 + (z1 - z2)**2)
+
+
 
 def main():
     #generates a new token to access user's information
@@ -75,18 +114,22 @@ def main():
     SPOTIFY_ACCESS_TOKEN = refresh_token.refresh()
     current_track_art = get_current_track(SPOTIFY_ACCESS_TOKEN)
 
-    #sets color 
-    if current_track_art == 'Unrecoverable Art':
-        color_values = [255, 255, 255]
-    elif current_track_art == 'No Track Playing':
-        color_values = [0, 0, 0]
-    else:
-        color_values = get_color(current_track_art)
+    # #sets color 
+    # if current_track_art == 'Unrecoverable Art':
+    #     color_values = [255, 255, 255]
+    # elif current_track_art == 'No Track Playing':
+    #     color_values = [0, 0, 0]
+    # else:
+    #     color_values = get_color(current_track_art)
     
-    print(color_values)
+    # print(color_values)
     
+    led_button = 0
+    if color_distance(current_track_art) < 250:
+        led_button = 1
+    
+    print(led_button)
 
-
-
+    
 if __name__ == "__main__":
     main()
