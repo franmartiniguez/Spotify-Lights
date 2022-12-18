@@ -3,6 +3,8 @@ from PIL import Image
 import requests
 from refresh import Refresh
 import math
+import RPi.GPIO as GPIO
+import time
 
 SPOTIFY_GET_CURRENT_TRACK_URL = 'https://api.spotify.com/v1/me/player'
 SPOTIFY_ACCESS_TOKEN = ''
@@ -109,26 +111,37 @@ def three_dimensional_distance(x1, y1, z1, x2, y2, z2):
 
 
 def main():
-    #generates a new token to access user's information
-    refresh_token = Refresh()
-    SPOTIFY_ACCESS_TOKEN = refresh_token.refresh()
-    current_track_art = get_current_track(SPOTIFY_ACCESS_TOKEN)
+    # #generates a new token to access user's information
+    # refresh_token = Refresh()
+    # SPOTIFY_ACCESS_TOKEN = refresh_token.refresh()
+    # current_track_art = get_current_track(SPOTIFY_ACCESS_TOKEN)
 
-    # #sets color 
-    # if current_track_art == 'Unrecoverable Art':
-    #     color_values = [255, 255, 255]
-    # elif current_track_art == 'No Track Playing':
-    #     color_values = [0, 0, 0]
-    # else:
-    #     color_values = get_color(current_track_art)
+    # # #sets color 
+    # # if current_track_art == 'Unrecoverable Art':
+    # #     color_values = [255, 255, 255]
+    # # elif current_track_art == 'No Track Playing':
+    # #     color_values = [0, 0, 0]
+    # # else:
+    # #     color_values = get_color(current_track_art)
     
-    # print(color_values)
+    # # print(color_values)
     
-    led_button = 0
-    if color_distance(current_track_art) < 250:
-        led_button = 1
+    # led_button = 0
+    # if color_distance(current_track_art) < 250:
+    #     led_button = 1
     
-    print(led_button)
+    while True:
+        refresh_token = Refresh()
+        SPOTIFY_ACCESS_TOKEN = refresh_token.refresh()
+        current_track_art = get_current_track(SPOTIFY_ACCESS_TOKEN)
+
+        if color_distance(current_track_art) < 250:
+            GPIO.output(14,GPIO.HIGH)
+        else:
+            GPIO.output(14,GPIO.LOW)
+        
+        time.sleep(1)
+        
 
     
 if __name__ == "__main__":
