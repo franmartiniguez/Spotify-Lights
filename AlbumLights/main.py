@@ -135,11 +135,40 @@ def main():
     GPIO.setmode(GPIO.BCM)
     GPIO.setwarnings(False)
     GPIO.setup(14,GPIO.OUT)
+    GPIO.setup(13, GPIO.OUT)
+    GPIO.setup(26, GPIO.OUT)
+    GPIO.setup(16, GPIO.OUT)
+    GPIO.setup(19, GPIO.OUT)
+
     try:
         while True:
             refresh_token = Refresh()
             SPOTIFY_ACCESS_TOKEN = refresh_token.refresh()
             current_track_art = get_current_track(SPOTIFY_ACCESS_TOKEN)
+
+            if current_track_art == 'Unrecoverable Art':
+                color_values = [255, 255, 255]
+            elif current_track_art == 'No Track Playing':
+                color_values = [0, 0, 0]
+            else:
+                color_values = get_color(current_track_art)
+
+            max_value = max(color_values)
+            if max_value == color_values[0]:
+                GPIO.output(16, GPIO.LOW)
+                GPIO.output(19, GPIO.LOW)
+                GPIO.output(13, GPIO.HIGH)
+                GPIO.output(26, GPIO.HIGH)
+            elif max_value == color_values[2]:
+                GPIO.output(16, GPIO.HIGH)
+                GPIO.output(19, GPIO.HIGH)
+                GPIO.output(13, GPIO.LOW)
+                GPIO.output(26, GPIO.LOW)
+            else:
+                GPIO.output(16, GPIO.HIGH)
+                GPIO.output(19, GPIO.LOW)
+                GPIO.output(13, GPIO.LOW)
+                GPIO.output(26, GPIO.HIGH)
 
             if color_distance(current_track_art) < 250:
                 GPIO.output(14,GPIO.HIGH)
