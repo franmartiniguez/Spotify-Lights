@@ -135,16 +135,18 @@ def main():
     GPIO.setmode(GPIO.BCM)
     GPIO.setwarnings(False)
     GPIO.setup(14,GPIO.OUT)
-    
-    while True:
-        refresh_token = Refresh()
-        SPOTIFY_ACCESS_TOKEN = refresh_token.refresh()
-        current_track_art = get_current_track(SPOTIFY_ACCESS_TOKEN)
+    try:
+        while True:
+            refresh_token = Refresh()
+            SPOTIFY_ACCESS_TOKEN = refresh_token.refresh()
+            current_track_art = get_current_track(SPOTIFY_ACCESS_TOKEN)
 
-        if color_distance(current_track_art) < 250:
-            GPIO.output(14,GPIO.HIGH)
-        else:
-            GPIO.output(14,GPIO.LOW)
+            if color_distance(current_track_art) < 250:
+                GPIO.output(14,GPIO.HIGH)
+            else:
+                GPIO.output(14,GPIO.LOW)
+    except:
+        GPIO.cleanup()
     
         
 if __name__ == "__main__":
