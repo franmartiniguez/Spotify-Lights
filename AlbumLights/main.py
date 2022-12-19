@@ -134,61 +134,17 @@ def main():
     
     GPIO.setmode(GPIO.BCM)
     GPIO.setwarnings(False)
-    # GPIO.setup(14,GPIO.OUT)
+    GPIO.setup(14,GPIO.OUT)
     
-    # while True:
-    #     refresh_token = Refresh()
-    #     SPOTIFY_ACCESS_TOKEN = refresh_token.refresh()
-    #     current_track_art = get_current_track(SPOTIFY_ACCESS_TOKEN)
+    while True:
+        refresh_token = Refresh()
+        SPOTIFY_ACCESS_TOKEN = refresh_token.refresh()
+        current_track_art = get_current_track(SPOTIFY_ACCESS_TOKEN)
 
-    #     if color_distance(current_track_art) < 250:
-    #         GPIO.output(14,GPIO.HIGH)
-    #     else:
-    #         GPIO.output(14,GPIO.LOW)
-
-    #set red,green and blue pins
-    redPin = 12
-    greenPin = 19
-    bluePin = 13
-    #set pins as outputs
-    GPIO.setup(redPin,GPIO.OUT)
-    GPIO.setup(greenPin,GPIO.OUT)
-    GPIO.setup(bluePin,GPIO.OUT)
-
-    def turnOff():
-        GPIO.output(redPin,GPIO.HIGH)
-        GPIO.output(greenPin,GPIO.HIGH)
-        GPIO.output(bluePin,GPIO.HIGH)
-
-    def red():
-        GPIO.output(redPin,GPIO.LOW)
-        GPIO.output(greenPin,GPIO.HIGH)
-        GPIO.output(bluePin,GPIO.HIGH)
-
-    def green():
-        GPIO.output(redPin,GPIO.HIGH)
-        GPIO.output(greenPin,GPIO.LOW)
-        GPIO.output(bluePin,GPIO.HIGH)
-        
-    def blue():
-        GPIO.output(redPin,GPIO.HIGH)
-        GPIO.output(greenPin,GPIO.HIGH)
-        GPIO.output(bluePin,GPIO.LOW)
-    
-    def white():
-        GPIO.output(redPin,GPIO.LOW)
-        GPIO.output(greenPin,GPIO.LOW)
-        GPIO.output(bluePin,GPIO.LOW)
-    
-    red()
-    time.sleep(1)
-    green()
-    time.sleep(1)
-    blue()
-    time.sleep(1)
-    white()
-    time.sleep(1)
-    turnOff()
+        if color_distance(current_track_art) < 250:
+            GPIO.output(14,GPIO.HIGH)
+        else:
+            GPIO.output(14,GPIO.LOW)
     
         
 if __name__ == "__main__":
