@@ -87,11 +87,11 @@ def main():
                 color_values = get_color(current_track_art)
                 
             if max(color_values) == color_values[0]:
-                pixels.fill((color_values[0], color_values[1]/2, color_values[2]/2))
+                pixels.fill((color_values[0], color_values[1]/2, color_values[2]/3))
             elif max(color_values) == color_values[1]:
-                pixels.fill((color_values[0]/2, color_values[1], color_values[2]/2))
+                pixels.fill((color_values[0]/2, color_values[1], color_values[2]/3))
             else:
-                pixels.fill((color_values[0]/2, color_values[1]/2, color_values[2]))
+                pixels.fill((color_values[0]/3, color_values[1]/3, color_values[2]))
 
 
     except:
