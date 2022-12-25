@@ -76,23 +76,19 @@ def main():
     GPIO.setwarnings(False)
 
     pixels = neopixel.NeoPixel(board.D18, 60)
+    while True:
+        refresh_token = Refresh()
+        SPOTIFY_ACCESS_TOKEN = refresh_token.refresh()
+        current_track_art = get_current_track(SPOTIFY_ACCESS_TOKEN)
 
-    try:
-        while True:
-            refresh_token = Refresh()
-            SPOTIFY_ACCESS_TOKEN = refresh_token.refresh()
-            current_track_art = get_current_track(SPOTIFY_ACCESS_TOKEN)
-
-            if current_track_art == 'Unrecoverable Art':
-                color_values = [255, 255, 255]
-            elif current_track_art == 'No Track Playing':
-                color_values = [0, 0, 0]
-            else:
-                color_values = get_color(current_track_art)
+        if current_track_art == 'Unrecoverable Art':
+            color_values = [255, 255, 255]
+        elif current_track_art == 'No Track Playing':
+            color_values = [0, 0, 0]
+        else:
+            color_values = get_color(current_track_art)
             
-            pixels.fill((color_values[0], color_values[1], color_values[2]))
-    except:
-        GPIO.cleanup()
+        pixels.fill((color_values[0], color_values[1], color_values[2]))
       
 if __name__ == "__main__":
     main()
