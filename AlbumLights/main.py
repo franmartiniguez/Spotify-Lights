@@ -2,9 +2,9 @@ import urllib.request
 from PIL import Image
 import requests
 from refresh import Refresh
-import math
 import RPi.GPIO as GPIO
-import time
+import board
+import neopixel
 
 SPOTIFY_GET_CURRENT_TRACK_URL = 'https://api.spotify.com/v1/me/player'
 SPOTIFY_ACCESS_TOKEN = ''
@@ -71,74 +71,11 @@ def get_color(current_track_art):
     
     return [average_red, average_green, average_blue]
 
-def color_distance(current_track_art):
-    if current_track_art == 'Unrecoverable Art':
-        red, green, blue = [255], [255], [255]
-    elif current_track_art == 'No Track Playing':
-        red, green, blue = [0], [0], [0]
-    else:
-        #Spotify image names are stored within the url Spotify gives, after /image/
-        #so this just finds it using the index where that part ends
-        image_name = current_track_art[current_track_art.find('e/') + 2:]
-
-        #gets the image using the specified url and image name and then converts the image into a list of rgb values of its pixels
-        urllib.request.urlretrieve(current_track_art, image_name)
-        img = Image.open(image_name)
-        img = img.convert('RGB')
-        
-        red = []
-        green = []
-        blue = []
-
-        #separates each rgb value by color
-        for i in img.getdata():
-            red.append(i[0])
-            green.append(i[1])
-            blue.append(i[2])
-        
-    average_red = sum(red)/len(red)
-    average_green = sum(green)/len(green)
-    average_blue = sum(blue)/len(blue)
-
-    distance_to_white = three_dimensional_distance(255, 255, 255, average_red, average_green, average_blue)
-
-    return distance_to_white
-
-#gets the distance between two points in three dimensions
-def three_dimensional_distance(x1, y1, z1, x2, y2, z2):
-    return math.sqrt((x1 - x2)**2 + (y1 - y2)**2 + (z1 - z2)**2)
-
-
-
 def main():
-    # #generates a new token to access user's information
-    # refresh_token = Refresh()
-    # SPOTIFY_ACCESS_TOKEN = refresh_token.refresh()
-    # current_track_art = get_current_track(SPOTIFY_ACCESS_TOKEN)
-
-    # # #sets color 
-    # # if current_track_art == 'Unrecoverable Art':
-    # #     color_values = [255, 255, 255]
-    # # elif current_track_art == 'No Track Playing':
-    # #     color_values = [0, 0, 0]
-    # # else:
-    # #     color_values = get_color(current_track_art)
-    
-    # # print(color_values)
-    
-    # led_button = 0
-    # if color_distance(current_track_art) < 250:
-    #     led_button = 1
-    
-
-    
     GPIO.setmode(GPIO.BCM)
     GPIO.setwarnings(False)
-    GPIO.setup(14,GPIO.OUT)
-    GPIO.setup(13, GPIO.OUT)
-    GPIO.setup(26, GPIO.OUT)
-    GPIO.setup(16, GPIO.OUT)
-    GPIO.setup(19, GPIO.OUT)
+
+    pixels = neopixel.NeoPixel(board.D18, 60)
 
     try:
         while True:
@@ -152,31 +89,10 @@ def main():
                 color_values = [0, 0, 0]
             else:
                 color_values = get_color(current_track_art)
-
-            max_value = max(color_values)
-            if max_value == color_values[0]:
-                GPIO.output(16, GPIO.LOW)
-                GPIO.output(19, GPIO.LOW)
-                GPIO.output(13, GPIO.HIGH)
-                GPIO.output(26, GPIO.HIGH)
-            elif max_value == color_values[2]:
-                GPIO.output(16, GPIO.HIGH)
-                GPIO.output(19, GPIO.HIGH)
-                GPIO.output(13, GPIO.LOW)
-                GPIO.output(26, GPIO.LOW)
-            else:
-                GPIO.output(16, GPIO.HIGH)
-                GPIO.output(19, GPIO.LOW)
-                GPIO.output(13, GPIO.LOW)
-                GPIO.output(26, GPIO.HIGH)
-
-            if color_distance(current_track_art) < 250:
-                GPIO.output(14,GPIO.HIGH)
-            else:
-                GPIO.output(14,GPIO.LOW)
+            
+            pixels.fill((color_values[0], color_values[1], color_values[2]))
     except:
         GPIO.cleanup()
-    
-        
+      
 if __name__ == "__main__":
     main()
