@@ -5,6 +5,7 @@ from refresh import Refresh
 import RPi.GPIO as GPIO
 import board
 import neopixel
+import time
 
 SPOTIFY_GET_CURRENT_TRACK_URL = 'https://api.spotify.com/v1/me/player'
 SPOTIFY_ACCESS_TOKEN = ''
@@ -89,7 +90,10 @@ def main():
             else:
                 color_values = get_color(current_track_art)
                 
+            print(color_values)
             pixels.fill((color_values[0], color_values[1], color_values[2]))
+            time.sleep(3)
+
     except:
         GPIO.cleanup()
         
