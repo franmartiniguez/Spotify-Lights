@@ -2,7 +2,6 @@ import urllib.request
 from PIL import Image
 import requests
 from refresh import Refresh
-import RPi.GPIO as GPIO
 import board
 import neopixel
 import time
@@ -73,9 +72,6 @@ def get_color(current_track_art):
     return [average_red, average_green, average_blue]
 
 def main():
-    GPIO.setmode(GPIO.BCM)
-    GPIO.setwarnings(False)
-
     pixels = neopixel.NeoPixel(board.D18, 60)
     try:
         while True:
@@ -90,12 +86,16 @@ def main():
             else:
                 color_values = get_color(current_track_art)
                 
-            print(color_values)
-            pixels.fill((color_values[0], color_values[1], color_values[2]))
-            time.sleep(3)
+            if max(color_values) == color_values[0]:
+                pixels.fill((color_values[0], color_values[1]/3, color_values[2]/3))
+            elif max(color_values) == color_values[1]:
+                pixels.fill((color_values[0]/3, color_values[1], color_values[2]/3))
+            else:
+                pixels.fill((color_values[0]/3, color_values[1]/3, color_values[2]))
+
 
     except:
-        GPIO.cleanup()
+        pixels.fill((0,0,0))
         
 if __name__ == "__main__":
     main()
