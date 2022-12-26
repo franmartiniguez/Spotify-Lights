@@ -52,7 +52,6 @@ def get_color(current_track_art):
     green = []
     blue = []
 
-    #separates each rgb value by color
     for i in img.getdata():
         red.append(i[0])
         green.append(i[1])
@@ -73,6 +72,7 @@ def get_color(current_track_art):
 
 def main():
     pixels = neopixel.NeoPixel(board.D18, 60)
+    #sets the lights to a certain color, unless the program stops, at which it turns off the lights
     try:
         while True:
             refresh_token = Refresh()
@@ -91,9 +91,7 @@ def main():
             elif max(color_values) == color_values[1]:
                 pixels.fill((color_values[0]/2, color_values[1], color_values[2]/3))
             else:
-                pixels.fill((color_values[0]/3, color_values[1]/3, color_values[2]))
-
-
+                pixels.fill((color_values[0]/2, color_values[1]/2, color_values[2]))
     except:
         pixels.fill((0,0,0))
         
